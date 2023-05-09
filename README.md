@@ -3,7 +3,7 @@
 **Author Name**: Sham Al-Jalam.
 
 ## WRRC
-![](WRRC.jpg)
+![](WRRClab14.jpg)
 
 ## Overview
 I've created movie library app by building a server using Node.js, Express.js and CORS, and nodemon in order for the server to be updated automatically ,and dotenv in order to be able to create global variables, alongside with axios to do different kind of http methods.
