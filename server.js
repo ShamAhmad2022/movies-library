@@ -8,6 +8,9 @@ const data = require('./Movie Data/data.json');
 require('dotenv').config();
 const axios = require('axios');
 
+const pg = require('pg');
+const client = new pg.Client(process.env.DBURL);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,6 +24,10 @@ app.get('/trending', handleTrendingMovie);
 app.get('/search', handleSearchingAMovie);
 app.get('/similarmovies', handleSimilarMovies);
 app.get('/availableregions', handleAvailableRegions);
+
+//from the database
+app.get('/getMovies', handleAllMovies);
+app.post('/addMovie', handleAddingMovies);
 
 app.use('*', code404);
 app.use('*', code500);
@@ -102,6 +109,27 @@ function handleAvailableRegions(req, res){
     }).catch( err => code500(err, req, res))
 }
 
+function handleAllMovies(req, res){
+    const sql= `select * from my_movies`;
+    client.query(sql).then(data => {
+        res.json(data.rows)
+    }).catch(err => {
+        code500(err, req, res)
+    })
+}
+
+function handleAddingMovies(req, res){
+    const userInput = req.body;
+    const sql = `insert into my_movies(title, release_date, poster_path, overview) values ($1, $2, $3, $4) returning *`;
+    const realValues = [userInput.title, userInput.release_date, userInput.poster_path, userInput.overview];
+
+    client.query(sql, realValues).then(data => {
+        res.status(201).json(data)
+    }).catch(err => {
+        code500(err, req, res)
+    })
+}
+
 function code404(req, res) {
     res.status(404).json(
         {
@@ -121,5 +149,7 @@ function code500(err, req, res) {
     
 }
 
-
-app.listen(PORT, () => console.log(`Server is working on port ${PORT}`));
+client.connect().then(con => {
+    console.log(con);
+    app.listen(PORT, () => console.log(`Server is working on port ${PORT}`));
+});
