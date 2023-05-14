@@ -28,6 +28,9 @@ app.get('/availableregions', handleAvailableRegions);
 //from the database
 app.get('/getMovies', handleAllMovies);
 app.post('/addMovie', handleAddingMovies);
+app.put('/update/:id', updateMovieById);
+app.delete('/delete/:id', deleteMovieById);
+app.get('/getMovies/:id', getMovieById);
 
 app.use('*', code404);
 app.use('*', code500);
@@ -127,6 +130,31 @@ function handleAddingMovies(req, res){
         res.status(201).json(data)
     }).catch(err => {
         code500(err, req, res)
+    })
+}
+
+function updateMovieById(req, res){
+    const id = req.params.id;
+    const newData = req.body;
+    const sql = `update my_movies set title=$1, release_date=$2, poster_path=$3, overview=$4 where id=$5 returning *`;
+    const updatedValue = [newData.title, newData.release_date, newData.poster_path, newData.overview, id];
+    client.query(sql, updatedValue).then(data => res.status(202).json(data.rows))
+}
+
+function deleteMovieById(req, res){
+    const id = req.params.id;
+    const sql = `delete from my_movies where id=${id}`;
+    client.query(sql).then(()=> res.status(204).json({
+        code:204,
+        message: `deleted successfully`
+    })).catch(err => code500(err, req, res))
+}
+
+function getMovieById(req, res){
+    const id = req.params.id;
+    const sql = `select * from my_movies where id=${id}`;
+    client.query(sql).then(data => {
+        res.status(200).json(data.rows[0])
     })
 }
 
