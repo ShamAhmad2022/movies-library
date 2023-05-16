@@ -41,6 +41,10 @@ const APIKEY = process.env.APIKEY;
 
 
 function showData(req, res) {
+    res.send('Welcome to movies-library, here are the following http requests you can try: \n\n From a local API: \n /favorite => get the data from the local API \n\n From a 3rd party API: \n /trending => get a list of trending movies \n /search => search for a certain movie through the list of the trending movies, by providing two qurey params: search word and page number -> ex: /search?search=land&page=1 \n /similarmovies => get list of movies similar to a certain movie, by providing the movie\'s id -> ex: /similarmovies?movie_id=9908 \n /availableregions =>  get a list of the available regions \n\n From The database: \n /getMovies => get the movies from the database \n /addMovie => add a movie to the database \n /update/:id => update a certain movie from the database -> ex: /update/3 \n /delete/:id => delete a certain movie from the database -> ex: /delete/4 \n /getMovies/:id => get a certain movie from the database -> ex: /getMovies/5');
+}
+
+function favoritePage(req, res) {
     let firstMovie = new Movie(data.title, data.poster_path, data.overview);
     res.status(200).json(firstMovie);
 }
@@ -49,10 +53,6 @@ function Movie(title, poster_path, overview) {
     this.title = title;
     this.poster_path = poster_path;
     this.overview = overview;
-}
-
-function favoritePage(req, res) {
-    res.send('Welcome to Favorite Page');
 }
 
 async function handleTrendingMovie(req, res){
