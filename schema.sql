@@ -5,3 +5,6 @@ create table if not exists my_movies(
     poster_path varchar(300),
     overview varchar(5000)
 );
+
+ALTER TABLE my_movies
+ADD user_comment varchar(3000);

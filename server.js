@@ -112,6 +112,7 @@ function handleAvailableRegions(req, res){
     }).catch( err => code500(err, req, res))
 }
 
+//from the database
 function handleAllMovies(req, res){
     const sql= `select * from my_movies`;
     client.query(sql).then(data => {
@@ -123,8 +124,8 @@ function handleAllMovies(req, res){
 
 function handleAddingMovies(req, res){
     const userInput = req.body;
-    const sql = `insert into my_movies(title, release_date, poster_path, overview) values ($1, $2, $3, $4) returning *`;
-    const realValues = [userInput.title, userInput.release_date, userInput.poster_path, userInput.overview];
+    const sql = `insert into my_movies(title, release_date, poster_path, overview, user_comment) values ($1, $2, $3, $4, $5) returning *`;
+    const realValues = [userInput.title, userInput.release_date, userInput.poster_path, userInput.overview, userInput.user_comment];
 
     client.query(sql, realValues).then(data => {
         res.status(201).json(data)
@@ -136,8 +137,8 @@ function handleAddingMovies(req, res){
 function updateMovieById(req, res){
     const id = req.params.id;
     const newData = req.body;
-    const sql = `update my_movies set title=$1, release_date=$2, poster_path=$3, overview=$4 where id=$5 returning *`;
-    const updatedValue = [newData.title, newData.release_date, newData.poster_path, newData.overview, id];
+    const sql = `update my_movies set title=$1, release_date=$2, poster_path=$3, overview=$4, user_comment=$5 where id=$6 returning *`;
+    const updatedValue = [newData.title, newData.release_date, newData.poster_path, newData.overview, newData.user_comment, id];
     client.query(sql, updatedValue).then(data => res.status(202).json(data.rows))
 }
 
