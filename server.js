@@ -134,12 +134,33 @@ function handleAddingMovies(req, res){
     })
 }
 
+//all table
+// function updateMovieById(req, res){
+//     const id = req.params.id;
+//     const newData = req.body;
+//     const sql = `update my_movies set title=$1, release_date=$2, poster_path=$3, overview=$4, user_comment=$5 where id=$6 returning *`;
+//     const updatedValue = [newData.title, newData.release_date, newData.poster_path, newData.overview, newData.user_comment, id];
+//     client.query(sql, updatedValue).then(result => {
+//         res.status(202).json({
+//             code: 202,
+//             movie: res.rows
+//         })
+//     }).catch(err => code500(err, req, res))
+// }
+
+//just one column
 function updateMovieById(req, res){
     const id = req.params.id;
     const newData = req.body;
-    const sql = `update my_movies set title=$1, release_date=$2, poster_path=$3, overview=$4, user_comment=$5 where id=$6 returning *`;
-    const updatedValue = [newData.title, newData.release_date, newData.poster_path, newData.overview, newData.user_comment, id];
-    client.query(sql, updatedValue).then(data => res.status(202).json(data.rows))
+    console.log(newData.user_comment)
+    const sql = `UPDATE my_movies SET user_comment = $1 WHERE id = $2 returning *`;
+    const updatedValue = [newData.user_comment, id];
+    client.query(sql, updatedValue).then(result => {
+        res.status(202).json({
+            code: 202,
+            movie: result.rows
+        })
+    }).catch(err => code500(err, req, res))
 }
 
 function deleteMovieById(req, res){
@@ -179,6 +200,6 @@ function code500(err, req, res) {
 }
 
 client.connect().then(con => {
-    console.log(con);
+    // console.log(con);
     app.listen(PORT, () => console.log(`Server is working on port ${PORT}`));
 });
